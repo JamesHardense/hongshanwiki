@@ -1,7 +1,7 @@
 <template>
   <a-config-provider :locale="locale">
     <div id="app">
-      <router-view/>
+      <router-view />
     </div>
   </a-config-provider>
 </template>
@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     locale () {
-      // 只是为了切换语言时，更新标题
+      // 只是为了切换语言时，更新标题sdfs
       const { title } = this.$route.meta
       title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
 
