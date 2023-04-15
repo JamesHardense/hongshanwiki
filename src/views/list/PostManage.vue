@@ -5,77 +5,70 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
-                <a-input v-model="queryParam.id" placeholder="" />
+              <a-form-item label="词条标题">
+                <a-input v-model="queryParam.id" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
+              <a-form-item label="词条状态">
                 <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
+                  <a-select-option value="0">待审核</a-select-option>
+                  <a-select-option value="1">展示中</a-select-option>
+                  <a-select-option value="2">已废用</a-select-option>
                 </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="词条分类">
+                <a-cascader
+                  v-model="queryParam.channelId"
+                  :options="options"
+                  :display-render="displayRender"
+                  expand-trigger="hover"
+                  placeholder="请选择"
+                  @change="onChange"
+                />
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%" />
+                <a-form-item label="创建作者">
+                  <a-input v-model="queryParam.userName" placeholder=""/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
+                <a-form-item label="发表日期">
+                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
                 </a-form-item>
               </a-col>
             </template>
-            <!-- <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
+            <a-col :md="!advanced && 8 || 24" :sm="24">
+              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
+                <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
                 <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
+                  <a-icon :type="advanced ? 'up' : 'down'"/>
                 </a>
               </span>
-            </a-col> -->
+            </a-col>
           </a-row>
         </a-form>
       </div>
 
-      <div class="table-operator">
+      <!-- <div class="table-operator">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item> -->
+      <!-- lock | unlock -->
+      <!-- <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px">
+            批量操作 <a-icon type="down" />
+          </a-button>
         </a-dropdown>
-      </div>
+      </div> -->
 
       <s-table
         ref="table"
@@ -83,25 +76,35 @@
         rowKey="key"
         :columns="columns"
         :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
         showPagination="auto"
       >
-        <span slot="serial" slot-scope="text, record, index">
-          {{ index + 1 }}
-        </span>
+        <!-- <span slot="serial" slot-scope="text, record, index">
+          {{ index + 1 }} -->
+        <!-- </span> -->
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
         </span>
-        <span slot="description" slot-scope="text">
-          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
+        <span slot="channelId" slot-scope="text">
+          <!-- <ellipsis :length="4" tooltip>{{ text }}</ellipsis> -->
+          <a-badge :status="text | statusTypeFilter" :text="text | channelFilter" />
         </span>
 
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="handleEdit(record)">配置</a>
-            <a-divider type="vertical" />
-            <a @click="handleSub(record)">订阅报警</a>
+            <a-row>
+              <div v-if="roleId > 1" >
+                <a style="color: #73d13d;" @click="handlelock(record)">锁词条</a>
+                <a-divider type="vertical" />
+                <a style="color: #faad14;" @click="handleSub(record)">日志</a>
+                <a-divider type="vertical" />
+                <a style="color: #ff4d4f;" @click="handleSub(record)">删除</a>
+              </div>
+              <div v-if="roleId == 1" >
+                <a style="color: #73d13d;" @click="handleEdit(record)">审核</a>
+                <a-divider type="vertical" />
+                <a style="color: #4096ff;" @click="handleSub(record)">查重</a>
+              </div>
+            </a-row>
           </template>
         </span>
       </s-table>
@@ -114,7 +117,7 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk" />
+      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -122,46 +125,48 @@
 <script>
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
+import { getServiceList } from '@/api/manage'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
 
 const columns = [
   {
-    title: '#',
-    scopedSlots: { customRender: 'serial' }
+    title: '词条标题',
+    dataIndex: 'postTitle',
+    scopedSlots: { customRender: 'postTitle' }
   },
   {
-    title: '规则编号',
-    dataIndex: 'no'
+    title: '词条分类',
+    dataIndex: 'channelId',
+    scopedSlots: { customRender: 'channelId' }
   },
   {
-    title: '描述',
-    dataIndex: 'description',
-    scopedSlots: { customRender: 'description' }
+    title: '创建作者',
+    dataIndex: 'author',
+    scopedSlots: { customRender: 'author' }
   },
+  // {
+  //   title: '',
+  //   dataIndex: 'callNo',
+  //   sorter: true,
+  //   needTotal: true,
+  //   customRender: (text) => text + ' 次'
+  // },
   {
-    title: '服务调用次数',
-    dataIndex: 'callNo',
-    sorter: true,
-    needTotal: true,
-    customRender: (text) => text + ' 次'
-  },
-  {
-    title: '状态',
+    title: '词条状态',
     dataIndex: 'status',
     scopedSlots: { customRender: 'status' }
   },
   {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
+    title: '发表时间',
+    dataIndex: 'createDate',
     sorter: true
   },
   {
     title: '操作',
     dataIndex: 'action',
-    width: '150px',
+    width: '220px',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -169,24 +174,35 @@ const columns = [
 const statusMap = {
   0: {
     status: 'default',
-    text: '关闭'
+    text: '已弃用'
   },
   1: {
-    status: 'processing',
-    text: '运行中'
+    status: 'success',
+    text: '展示中'
   },
   2: {
-    status: 'success',
-    text: '已上线'
+    status: 'error',
+    text: '待审核'
+  }
+}
+
+const channelMap = {
+  0: {
+    text: '医院'
+  },
+  1: {
+    text: '政府机构'
+  },
+  2: {
+    text: '网站'
   },
   3: {
-    status: 'error',
-    text: '异常'
+    text: '学校'
   }
 }
 
 export default {
-  name: 'TableListClass',
+  name: 'TableList',
   components: {
     STable,
     Ellipsis,
@@ -202,6 +218,7 @@ export default {
       mdl: null,
       // 高级搜索 展开/关闭
       advanced: false,
+      roleId: '',
       // 查询参数
       queryParam: {},
       // 加载数据方法 必须为 Promise 对象
@@ -210,11 +227,46 @@ export default {
         console.log('loadData request parameters:', requestParameters)
         return getServiceList(requestParameters)
           .then(res => {
+            this.roleId = 2
             return res.result
           })
       },
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      options: [
+        {
+          value: '0',
+          label: '科技',
+          children: [
+            {
+              value: '1',
+              label: '电子产品'
+            },
+            {
+              value: '2',
+              label: '网站'
+            }
+          ]
+        },
+        {
+          value: '3',
+          label: '社会',
+          children: [
+            {
+              value: '4',
+              label: '政府机构'
+            },
+            {
+              value: '5',
+              label: '学校'
+            },
+            {
+              value: '6',
+              label: '医院'
+            }
+          ]
+        }
+      ]
     }
   },
   filters: {
@@ -223,11 +275,16 @@ export default {
     },
     statusTypeFilter (type) {
       return statusMap[type].status
+    },
+    channelFilter (type) {
+      return channelMap[type].text
     }
   },
-  created () {
-    getRoleList({ t: new Date() })
-  },
+
+  // created () {
+  //   // getRoleList({ t: new Date() })
+  //   getRole
+  // },
   computed: {
     rowSelection () {
       return {
@@ -244,6 +301,12 @@ export default {
     handleEdit (record) {
       this.visible = true
       this.mdl = { ...record }
+    },
+    handlelock (record) {
+      this.$router.push({
+      name: 'LockEntry',
+      params: record
+    })
     },
     handleOk () {
       const form = this.$refs.createModal.form
@@ -313,6 +376,9 @@ export default {
       this.queryParam = {
         date: moment(new Date())
       }
+    },
+    displayRender ({ labels }) {
+      return labels[labels.length - 1]
     }
   }
 }

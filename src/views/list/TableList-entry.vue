@@ -48,7 +48,7 @@
                 </a-form-item>
               </a-col>
             </template>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
+            <!-- <a-col :md="(!advanced && 8) || 24" :sm="24">
               <span
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
@@ -60,7 +60,7 @@
                   <a-icon :type="advanced ? 'up' : 'down'" />
                 </a>
               </span>
-            </a-col>
+            </a-col> -->
           </a-row>
         </a-form>
       </div>

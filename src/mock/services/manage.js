@@ -1,7 +1,7 @@
 import Mock from 'mockjs2'
 import { builder, getQueryParameters } from '../util'
 
-const totalCount = 5701
+const totalCount = 11
 
 const serverList = (options) => {
   const parameters = getQueryParameters(options)
@@ -18,11 +18,16 @@ const serverList = (options) => {
     result.push({
       key: tmpKey,
       id: tmpKey,
-      no: 'No ' + tmpKey,
-      description: '这是一段描述',
-      callNo: Mock.mock('@integer(1, 999)'),
-      status: Mock.mock('@integer(0, 3)'),
-      updatedAt: Mock.mock('@datetime'),
+      // no: 'No ' + tmpKey,
+      // description: '这是一段描述',
+      // callNo: Mock.mock('@integer(1, 999)'),
+      // status: Mock.mock('@integer(0, 2)'),
+      // updatedAt: Mock.mock('@datetime'),
+      postTitle: '词条' + tmpKey,
+      author: '匿名',
+      channelId: Mock.mock('@integer(0, 2)'),
+      status: Mock.mock('@integer(0, 2)'),
+      createDate: Mock.mock('@datetime'),
       editable: false
     })
   }
@@ -245,7 +250,219 @@ const radar = () => {
   ])
 }
 
+const channelTotalCount = 5
+const channelList = (options) => {
+  const parameters = getQueryParameters(options)
+
+  // const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(channelTotalCount / pageSize)
+  // const key = (pageNo - 1) * pageSize
+  // const next = (pageNo >= totalPage ? (channelTotalCount % pageSize) : pageSize) + 1
+
+  // for (let i = 1; i < next; i++) {
+  //   const tmpKey = key + i
+  //   result.push({
+  //     key: tmpKey,
+  //     id: tmpKey,
+  //     // no: 'No ' + tmpKey,
+  //     // description: '这是一段描述',
+  //     // callNo: Mock.mock('@integer(1, 999)'),
+  //     // status: Mock.mock('@integer(0, 2)'),
+  //     // updatedAt: Mock.mock('@datetime'),
+  //     postTitle: '词条' + tmpKey,
+  //     auditor: '审核人' + tmpKey,
+  //     channelId: Mock.mock('@integer(0, 2)'),
+  //     status: Mock.mock('@integer(0, 1)'),
+  //     createDate: Mock.mock('@datetime'),
+  //     editable: false
+  //   })
+  // }
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: [{
+      auditor: '大类审核人1',
+      auditorId: '1',
+      id: '1',
+      name: '社会',
+      key: 'society',
+      parentName: '-',
+      parentId: '0',
+      status: '0',
+      createDate: Mock.mock('@datetime')
+    },
+    {
+      auditor: '大类审核人2',
+      auditorId: '2',
+      name: '科技',
+      id: '2',
+      key: 'science and technoloy',
+      parentName: '-',
+      status: '1',
+      parentId: '1',
+      createDate: Mock.mock('@datetime')
+    },
+    {
+      auditor: '科技审核人1',
+      auditorId: '3',
+      name: '网站',
+      key: 'website',
+      id: '3',
+      parentName: '科技',
+      parentId: '1',
+      status: '1',
+      createDate: Mock.mock('@datetime')
+    },
+    {
+      auditor: '科技审核人2',
+      auditorId: '4',
+      name: '电子产品',
+      id: '4',
+      key: 'electronic products',
+      parentName: '科技',
+      status: '1',
+      parentId: '1',
+      createDate: Mock.mock('@datetime')
+    }
+    ]
+  })
+}
+
+const userTotalCount = 5
+const userList = (options) => {
+  const parameters = getQueryParameters(options)
+
+  // const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(userTotalCount / pageSize)
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: [
+      {
+        userName: '用户1',
+        id: '1',
+        roleName: '普通用户',
+        roleId: '1',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      },
+      {
+        userName: '用户2',
+        id: '2',
+        roleName: '普通用户',
+        roleId: '1',
+        status: '0',
+        createDate: Mock.mock('@datetime')
+      },
+      {
+        userName: '大类审核人1',
+        id: '3',
+        roleName: '大类审核人',
+        roleId: '2',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      },
+      {
+        userName: '小类审核人1',
+        id: '4',
+        roleName: '小类审核人',
+        roleId: '3',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      }
+    ]
+  })
+}
+
+const roleTotalCount = 5
+const roleList = (options) => {
+  const parameters = getQueryParameters(options)
+
+  // const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(roleTotalCount / pageSize)
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: [
+      {
+        id: '1',
+        roleName: '普通用户',
+        status: '0',
+        createDate: Mock.mock('@datetime')
+      },
+      {
+        id: '3',
+        roleName: '大类审核人',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      },
+      {
+        id: '4',
+        roleName: '小类审核人',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      }
+    ]
+  })
+}
+
+const templateTotalCount = 5
+const templateList = (options) => {
+  const parameters = getQueryParameters(options)
+
+  // const result = []
+  const pageNo = parseInt(parameters.pageNo)
+  const pageSize = parseInt(parameters.pageSize)
+  const totalPage = Math.ceil(templateTotalCount / pageSize)
+
+  return builder({
+    pageSize: pageSize,
+    pageNo: pageNo,
+    totalCount: totalCount,
+    totalPage: totalPage,
+    data: [
+      {
+        id: '1',
+        templateName: '模板1',
+        channelName: '科技/电子产品',
+        channelId: '1',
+        auditorId: '1',
+        auditorName: '审核员1',
+        status: '1',
+        createDate: Mock.mock('@datetime')
+      }
+    ]
+  })
+}
+
+const userRole = () => {
+  return builder({
+    'data': {
+      roleId: Mock.mock('@integer(1, 2)')
+    }
+  })
+}
 Mock.mock(/\/service/, 'get', serverList)
+Mock.mock(/\/channel/, 'get', channelList)
+Mock.mock(/\/user/, 'get', userList)
+Mock.mock(/\/user\/role/, 'get', userRole)
+Mock.mock(/\/template/, 'get', templateList)
+Mock.mock(/\/roleList/, 'get', roleList)
 Mock.mock(/\/list\/search\/projects/, 'get', projects)
 Mock.mock(/\/workplace\/activity/, 'get', activity)
 Mock.mock(/\/workplace\/teams/, 'get', teams)

@@ -17,6 +17,62 @@ export const asyncRouterMap = [
     children: [
       // dashboard
       {
+        path: '/post-management/:pageNo([1-9]\\d*)?',
+        name: 'PostManagement',
+        hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+        component: () => import('@/views/list/PostManage'),
+        meta: { title: 'menu.entry-management', keepAlive: true, permission: ['table'], icon: 'book' }
+      },
+      {
+        path: '/channel-management/:pageNo([1-9]\\d*)?',
+        name: 'ChannelManagement',
+        hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+        component: () => import('@/views/list/ChannelManagement'),
+        meta: { title: 'menu.channel-management', keepAlive: true, permission: ['table'], icon: 'tag' }
+      },
+      {
+        path: '/template-management/:pageNo([1-9]\\d*)?',
+        name: 'TemplateManagement',
+        hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+        component: () => import('@/views/admin/template/TemplateManagement'),
+        meta: { title: 'menu.template-management', keepAlive: true, permission: ['table'], icon: 'file-text' }
+      },
+      {
+        path: '/lock-entry/',
+        name: 'LockEntry',
+        hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+        component: () => import('@/views/admin/Entry/index'),
+        hidden: true,
+        meta: { title: 'menu.lock-entry', keepAlive: true, permission: ['table'] }
+      },
+      {
+        path: '/template-management/create-template',
+        name: 'create-template',
+        hidden: true,
+        component: () => import('@/views/admin/template/createTemplate/CreateTemplate'),
+        meta: { title: 'menu.create-template', keepAlive: true, permission: ['form'] }
+      },
+      {
+        path: '/system-management',
+        name: 'SystemManagement',
+        component: RouteView,
+        meta: { title: 'menu.system-management', keepAlive: true, permission: ['table'], icon: 'setting' },
+        children: [
+          {
+            path: '/system-management/user-management/:pageNo([1-9]\\d*)?',
+            name: 'UserManagement',
+            component: () => import('@/views/admin/user/UserManagement'),
+            meta: { title: 'menu.user-management', keepAlive: true, permission: ['table'], icon: 'user' }
+          },
+          {
+            path: '/system-management/role-management/:pageNo([1-9]\\d*)?',
+            name: 'RoleManagement',
+            component: () => import('@/views/admin/role/RoleManagement'),
+            meta: { title: 'menu.role-management', keepAlive: true, permission: ['table'], icon: 'team' }
+          }
+        ]
+      },
+      {
         path: '/dashboard',
         name: 'dashboard',
         redirect: '/dashboard/workplace',
@@ -83,13 +139,13 @@ export const asyncRouterMap = [
         redirect: '/list/table-list',
         meta: { title: 'menu.list', icon: 'table', permission: ['table'] },
         children: [
-          {
-            path: '/list/table-list/:pageNo([1-9]\\d*)?',
-            name: 'TableListWrapper',
-            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
-            component: () => import('@/views/list/TableList'),
-            meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
-          },
+          // {
+          //   path: '/list/table-list/:pageNo([1-9]\\d*)?',
+          //   name: 'TableListWrapper',
+          //   hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+          //   component: () => import('@/views/list/TableList'),
+          //   meta: { title: 'menu.list.table-list', keepAlive: true, permission: ['table'] }
+          // },
           {
             path: '/list/basic-list',
             name: 'BasicList',
@@ -381,6 +437,7 @@ export const constantRouterMap = [
 
   {
     path: '/404',
+    name: 'error',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 ]

@@ -2,11 +2,14 @@ import request from '@/utils/request'
 
 const api = {
   user: '/user',
-  role: '/role',
+  role: '/roleList',
+  userRole: '/user/role',
   service: '/service',
+  template: '/template',
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
-  orgTree: '/org/tree'
+  orgTree: '/org/tree',
+  channel: '/channel'
 }
 
 export default api
@@ -14,6 +17,14 @@ export default api
 export function getUserList (parameter) {
   return request({
     url: api.user,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getTemplateList (parameter) {
+  return request({
+    url: api.template,
     method: 'get',
     params: parameter
   })
@@ -30,6 +41,22 @@ export function getRoleList (parameter) {
 export function getServiceList (parameter) {
   return request({
     url: api.service,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getRole (parameter) {
+  return request({
+    url: api.userRole,
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getChannelList (parameter) {
+  return request({
+    url: api.channel,
     method: 'get',
     params: parameter
   })

@@ -5,62 +5,21 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
-                <a-input v-model="queryParam.id" placeholder="" />
+              <a-form-item label="用户名">
+                <a-input v-model="queryParam.username" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
+              <a-form-item label="角色">
+                <a-select placeholder="请选择" @change="handleChange" v-model="queryParam.roleId">
+                  <a-select-option v-for="role in roles" :key="role.id" :value="role.id" :label="role.name">
+                    {{ role.name }}
+                  </a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
-            <!-- <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col> -->
+            <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
           </a-row>
         </a-form>
       </div>
@@ -73,7 +32,9 @@
             <!-- lock | unlock -->
             <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px">
+            批量操作 <a-icon type="down" />
+          </a-button>
         </a-dropdown>
       </div>
 
@@ -87,26 +48,21 @@
         :rowSelection="rowSelection"
         showPagination="auto"
       >
-        <span slot="serial" slot-scope="text, record, index">
-          {{ index + 1 }}
-        </span>
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
         </span>
-        <span slot="description" slot-scope="text">
-          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
-        </span>
-
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="handleEdit(record)">配置</a>
+            <a style="color: #73d13d;" @click="handleEdit(record)">修改</a>
             <a-divider type="vertical" />
-            <a @click="handleSub(record)">订阅报警</a>
+            <a style="color: #ff4d4f;" @click="handleSub(record)">删除</a>
+            <a-divider type="vertical" />
+            <a style="color: #4096ff;" @click="handleSub(record)">修改密码</a>
           </template>
         </span>
       </s-table>
 
-      <create-form
+      <create-user
         ref="createModal"
         :visible="visible"
         :loading="confirmLoading"
@@ -114,7 +70,7 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk" />
+      <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -122,31 +78,21 @@
 <script>
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
+import { getRoleList, getUserList } from '@/api/manage'
 
 import StepByStepModal from './modules/StepByStepModal'
-import CreateForm from './modules/CreateForm'
+import CreateUser from './modules/CreateUser'
 
 const columns = [
   {
-    title: '#',
-    scopedSlots: { customRender: 'serial' }
+    title: '用户名',
+    dataIndex: 'userName',
+    scopedSlots: { customRender: 'userName' }
   },
   {
-    title: '规则编号',
-    dataIndex: 'no'
-  },
-  {
-    title: '描述',
-    dataIndex: 'description',
-    scopedSlots: { customRender: 'description' }
-  },
-  {
-    title: '服务调用次数',
-    dataIndex: 'callNo',
-    sorter: true,
-    needTotal: true,
-    customRender: (text) => text + ' 次'
+    title: '角色',
+    dataIndex: 'roleName',
+    scopedSlots: { customRender: 'roleName' }
   },
   {
     title: '状态',
@@ -154,14 +100,14 @@ const columns = [
     scopedSlots: { customRender: 'status' }
   },
   {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
+    title: '创建时间',
+    dataIndex: 'createDate',
     sorter: true
   },
   {
     title: '操作',
     dataIndex: 'action',
-    width: '150px',
+    width: '220px',
     scopedSlots: { customRender: 'action' }
   }
 ]
@@ -169,33 +115,64 @@ const columns = [
 const statusMap = {
   0: {
     status: 'default',
-    text: '关闭'
+    text: '已停用'
   },
   1: {
-    status: 'processing',
-    text: '运行中'
+    status: 'success',
+    text: '使用中'
+  }
+  // 2: {
+  //   status: 'error',
+  //   text: '待审核'
+  // }
+}
+
+const channelMap = {
+  0: {
+    text: '医院'
+  },
+  1: {
+    text: '政府机构'
   },
   2: {
-    status: 'success',
-    text: '已上线'
+    text: '网站'
   },
   3: {
-    status: 'error',
-    text: '异常'
+    text: '学校'
   }
 }
 
+const roles = [
+  {
+    id: '0',
+    name: '普通用户'
+  },
+  {
+    id: '1',
+    name: '大类审核员'
+  },
+  {
+    id: '2',
+    name: '小类审核员'
+  },
+  {
+    id: '3',
+    name: '超级管理员'
+  }
+]
+
 export default {
-  name: 'TableListClass',
+  name: 'TableList',
   components: {
     STable,
     Ellipsis,
-    CreateForm,
+    CreateUser,
     StepByStepModal
   },
   data () {
     this.columns = columns
     return {
+      roles,
       // create model
       visible: false,
       confirmLoading: false,
@@ -208,13 +185,47 @@ export default {
       loadData: parameter => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         console.log('loadData request parameters:', requestParameters)
-        return getServiceList(requestParameters)
+        return getUserList(requestParameters)
           .then(res => {
             return res.result
           })
       },
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      options: [
+        {
+          value: '0',
+          label: '科技',
+          children: [
+            {
+              value: '1',
+              label: '电子产品'
+            },
+            {
+              value: '2',
+              label: '网站'
+            }
+          ]
+        },
+        {
+          value: '3',
+          label: '社会',
+          children: [
+            {
+              value: '4',
+              label: '政府机构'
+            },
+            {
+              value: '5',
+              label: '学校'
+            },
+            {
+              value: '6',
+              label: '医院'
+            }
+          ]
+        }
+      ]
     }
   },
   filters: {
@@ -223,8 +234,12 @@ export default {
     },
     statusTypeFilter (type) {
       return statusMap[type].status
+    },
+    channelFilter (type) {
+      return channelMap[type].text
     }
   },
+
   created () {
     getRoleList({ t: new Date() })
   },
@@ -243,6 +258,7 @@ export default {
     },
     handleEdit (record) {
       this.visible = true
+      console.log(record)
       this.mdl = { ...record }
     },
     handleOk () {
@@ -313,6 +329,9 @@ export default {
       this.queryParam = {
         date: moment(new Date())
       }
+    },
+    displayRender ({ labels }) {
+      return labels[labels.length - 1]
     }
   }
 }

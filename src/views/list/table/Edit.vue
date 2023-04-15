@@ -5,7 +5,7 @@
       <a-form-item
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
-        label="规则编号"
+        label="编号"
         hasFeedback
         validateStatus="success"
       >

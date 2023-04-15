@@ -27,8 +27,9 @@
           <div>
             <mini-area />
           </div>
-          <template slot="footer"
-            >{{ $t('dashboard.analysis.day-visits') }}<span> {{ '1234' | NumberFormat }}</span></template
+          <template
+            slot="footer"
+          >{{ $t('dashboard.analysis.day-visits') }}<span> {{ '1234' | NumberFormat }}</span></template
           >
         </chart-card>
       </a-col>

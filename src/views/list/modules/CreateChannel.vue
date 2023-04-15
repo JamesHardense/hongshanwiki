@@ -9,7 +9,6 @@
   >
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="formLayout">
-        <!-- 检查是否有 id 并且大于0，大于0是修改。其他是新增，新增不显示主键ID -->
         <a-form-item v-show="model && model.id > 0" label="分类ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
@@ -21,17 +20,31 @@
         </a-form-item>
         <a-form-item label="一级分类">
           <a-select placeholder="请选择" @change="handleChange" v-decorator="['parentId', {rules: [{required: true, message: '请输入一级分类'}]}]">
-            <a-select-option v-for="channel in channels" :key="channel.parentId" :value="channel.parentId" >
+            <a-select-option v-for="channel in channels" :key="channel.parentId" :value="channel.parentId + ''" :label="channel.parentName">
               {{ channel.parentName }}
             </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="审核人">
           <a-select placeholder="请选择" @change="handleChange" v-decorator="['auditorId', {rules: [{required: true, message: '请输入审核人'}]}]">
-            <a-select-option v-for="auditor in auditors" :key="auditor.id" :value="auditor.id" :label="auditor.userName">
+            <a-select-option v-for="auditor in auditors" :key="auditor.id" :value="auditor.id + ''" :label="auditor.userName">
               {{ auditor.userName }}
             </a-select-option>
           </a-select>
+        </a-form-item>
+        <a-form-item v-show="model && model.id > 0" label="状态">
+          <a-select placeholder="请选择" @change="handleChange" v-decorator="['status', {rules: [{required: true, message: '请输入审核人'}]}]">
+            <a-select-option value="0">已停用</a-select-option>
+            <a-select-option value="1">使用中</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item v-show="model && model.id > 0" label="创建时间">
+          <a-date-picker
+            v-decorator="['createDate', config]"
+            show-time
+            format="YYYY-MM-DD HH:mm:ss"
+            disabled
+          />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -42,7 +55,7 @@
 import pick from 'lodash.pick'
 
 // 表单字段
-const fields = ['key', 'id', 'parentId', 'name', 'auditorId']
+const fields = ['key', 'id', 'parentId', 'name', 'auditorId', 'status', 'createDate']
 const channels = [
             {
               parentId: 0,
@@ -69,6 +82,14 @@ const auditors = [
   {
     id: 2,
     userName: '审核人3'
+  },
+  {
+    id: 3,
+    userName: '审核人4'
+  },
+  {
+    id: 4,
+    userName: '审核人5'
   }
 ]
 export default {
